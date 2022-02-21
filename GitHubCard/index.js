@@ -5,11 +5,6 @@ import axios from 'axios';
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-axios.get(`https://api.github.com/users/sharontsanchez`) // axios calls takes long time to respond, or give the information back and javascript wont wait for it, it is neccessary to trigger a function by using then() and catch(). then() tells us when the promise is fulfilled and catch() tells us if we run into an error. 
-  .then( resp => {
-    console.log(resp);
-  }) // promise is fulfilled 
-  .catch( err => console.error(err)) // catches the error 
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -18,24 +13,6 @@ axios.get(`https://api.github.com/users/sharontsanchez`) // axios calls takes lo
 
     Skip to STEP 3 (line 34).
 */
-
-/*
-  STEP 4: Pass the data received from Github into your function,
-    and append the returned markup to the DOM as a child of .cards
-*/
-
-/*
-  STEP 5: Now that you have your own card getting added to the DOM, either
-    follow this link in your browser https://api.github.com/users/<Your github name>/followers,
-    manually find some other users' github handles, or use the list found at the
-    bottom of the page. Get at least 5 different Github usernames and add them as
-    Individual strings to the friendsArray below.
-
-    Using that array, iterate over it, requesting data for each user, creating a new card for each
-    user, and adding that card to the DOM.
-*/
-
-const followersArray = [];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -58,6 +35,27 @@ const followersArray = [];
 */
 
 /*
+  STEP 4: Pass the data received from Github into your function,
+    and append the returned markup to the DOM as a child of .cards
+*/
+
+// we have selected our class called .cards and appended our github to it. 
+
+/*
+  STEP 5: Now that you have your own card getting added to the DOM, either
+    follow this link in your browser https://api.github.com/users/<Your github name>/followers,
+    manually find some other users' github handles, or use the list found at the
+    bottom of the page. Get at least 5 different Github usernames and add them as
+    Individual strings to the friendsArray below.
+
+    Using that array, iterate over it, requesting data for each user, creating a new card for each
+    user, and adding that card to the DOM.
+*/
+
+// const followersArray = [tetondan, dustinmyers, justsml, luishrd, bigknell];
+
+
+/*
   List of LS Instructors Github username's:
     tetondan
     dustinmyers
@@ -65,3 +63,75 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+
+
+const followersArray = ['sharontsanchez','austenallred','brityhemming','crharding','wlongmire','ladrillo','tetondan','dustinmyers', 'justsml','luishrd','bigknell'];
+
+for (let i = 0; i < followersArray.length; i++){
+  getGitCard(followersArray[i])
+} // using a for loop, we can loop over this followersArray, we call the getGitCard function and pass in the followersArray at index i.
+
+
+// create a function to hold the axios call that accepts a username
+
+function getGitCard(username){
+  axios.get(`https://api.github.com/users/${username}`) // axios calls takes long time to respond, or give the information back and javascript wont wait for it, it is neccessary to trigger a function by using then() and catch(). then() tells us when the promise is fulfilled and catch() tells us if we run into an error. 
+  .then( resp => {
+    // we have selected our class called .cards and appended our github to it. 
+    document.querySelector('.cards').appendChild(githubCard(resp.data)); // dig through to find what we need and we need the data object. 
+  }) // promise is fulfilled 
+  .catch( err => console.error(err)) // catches the error 
+}
+
+
+function githubCard(gitInfo) {
+  const card = document.createElement('div');
+  const img = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const login = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileLink = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+// styling 
+
+card.classList.add('card');
+cardInfo.classList.add('card-info');
+name.classList.add('name');
+login.classList.add('username');
+
+// set up the markup 
+
+  img.src = gitInfo.avatar_url;
+  img.alt = "github user";
+  name.textContent = gitInfo.name;
+  login.textContent = gitInfo.login;
+  location.textContent = gitInfo.location;
+  profile.textContent = "Profile";
+  profileLink.textContent = "Link to profile";
+  profileLink.href = gitInfo.html_url;
+  followers.textContent = `Followers: ${gitInfo.followers}`;
+  following.textContent = `Following: ${gitInfo.following}`;
+  bio.textContent = gitInfo.bio;
+  
+
+
+  card.appendChild(img);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(login);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  cardInfo.appendChild(profileLink);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  return card;
+}
+
